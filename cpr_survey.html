@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>心理健康調查｜急救旁觀者研究</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ef;
+    --bg2: #eee9e0;
+    --card: #fffcf8;
+    --text: #2c2520;
+    --text-muted: #7a6f65;
+    --accent: #8b7355;
+    --accent-light: #c4aa87;
+    --accent-soft: #f0e8da;
+    --green: #6b8f71;
+    --green-soft: #e6efe7;
+    --progress-fill: #8b7355;
+    --border: #ddd5c5;
+    --shadow: 0 4px 24px rgba(44,37,32,0.08);
+    --radius: 16px;
+    --btn-radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── BREATHING BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(196,170,135,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(107,143,113,0.10) 0%, transparent 60%);
+    pointer-events: none;
+    animation: breathe 8s ease-in-out infinite alternate;
+  }
+  @keyframes breathe {
+    from { opacity: 0.6; }
+    to   { opacity: 1; }
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 80px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--bg2);
+    z-index: 100;
+  }
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-light), var(--accent));
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    border-radius: 0 2px 2px 0;
+  }
+  #progress-label {
+    position: fixed;
+    top: 10px; right: 16px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    z-index: 100;
+    font-family: 'Noto Sans TC', sans-serif;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 560px;
+    padding: 36px 28px;
+    margin-top: 32px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-chip {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  /* ── QUESTION TEXT ── */
+  .q-number {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: -16px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  /* ── LIKERT SCALE (horizontal buttons) ── */
+  .scale-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    padding: 0 2px;
+  }
+  .scale-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .scale-btn {
+    flex: 1;
+    aspect-ratio: 1;
+    max-width: 60px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .scale-btn:active, .scale-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(1.05);
+  }
+
+  /* ── SINGLE/MULTI CHOICE ── */
+  .choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .choice-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 18px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text);
+    transition: all 0.2s;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .choice-btn .choice-key {
+    min-width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--bg2);
+    color: var(--text-muted);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+  .choice-btn:active, .choice-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--text);
+  }
+  .choice-btn.selected .choice-key {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── TEXT INPUT ── */
+  .text-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--btn-radius);
+    background: var(--card);
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .text-input:focus {
+    border-color: var(--accent);
+  }
+  input.text-input {
+    min-height: unset;
+    height: 52px;
+    resize: none;
+  }
+
+  /* ── RATING (1-10) ── */
+  .rating-wrap {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .rating-btn {
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .rating-btn.selected, .rating-btn:active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .rating-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    align-items: center;
+  }
+  .btn-next {
+    flex: 1;
+    padding: 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 16px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-next:hover { background: #7a6348; }
+  .btn-next:active { transform: scale(0.98); }
+  .btn-next:disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+  .btn-back {
+    width: 48px; height: 52px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--btn-radius);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-back:hover { background: var(--accent-soft); }
+
+  /* ── TRANSITION / SECTION BREAK ── */
+  .section-break {
+    background: linear-gradient(135deg, var(--green-soft) 0%, var(--accent-soft) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 28px;
+    text-align: center;
+    max-width: 560px;
+    width: 100%;
+    margin-top: 32px;
+  }
+  .section-break .sb-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .section-break h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .section-break p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .btn-continue {
+    padding: 14px 36px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .btn-continue:hover { background: #5a7a60; }
+
+  /* ── WELCOME SCREEN ── */
+  #welcome {
+    max-width: 560px;
+    width: 100%;
+    margin-top: 40px;
+    text-align: center;
+  }
+  #welcome .logo-mark {
+    width: 64px; height: 64px;
+    background: var(--accent-soft);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 24px;
+    border: 1px solid var(--border);
+  }
+  #welcome h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  #welcome p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.85;
+    margin-bottom: 32px;
+  }
+  .id-field-wrap {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .id-field-wrap input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--btn-radius);
+    background: var(--card);
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .id-field-wrap input:focus { border-color: var(--accent); }
+  .btn-start {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 17px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: all 0.2s;
+  }
+  .btn-start:hover { background: #7a6348; }
+  .resume-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--green);
+    display: none;
+  }
+
+  /* ── COMPLETE SCREEN ── */
+  #complete {
+    max-width: 560px;
+    width: 100%;
+    margin-top: 40px;
+    text-align: center;
+  }
+  #complete .done-icon {
+    font-size: 56px;
+    margin-bottom: 24px;
+    display: block;
+    animation: pop 0.5s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  #complete h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  #complete p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.85;
+    margin-bottom: 32px;
+  }
+  .btn-export {
+    padding: 14px 32px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 6px;
+  }
+  .btn-export:hover { background: #5a7a60; }
+
+  /* ── SKIP LINK ── */
+  .skip-link {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .skip-link:hover { color: var(--accent); }
+
+  /* ── SLIDE ANIMATION ── */
+  .slide-in {
+    animation: slideIn 0.45s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-out {
+    animation: slideOut 0.3s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes slideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* ── SAVE INDICATOR ── */
+  #save-dot {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: var(--green-soft);
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    z-index: 200;
+  }
+  #save-dot.show { opacity: 1; }
+
+  /* ── MULTI-CHOICE HINT ── */
+  .multi-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .multi-hint::before {
+    content: '';
+    width: 16px; height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--accent-light);
+    flex-shrink: 0;
+  }
+
+  /* ── REQUIRED MARK ── */
+  .req { color: #c0533a; font-size: 13px; margin-left: 2px; }
+
+  @media (max-width: 400px) {
+    .q-text { font-size: 16px; }
+    .scale-btn { font-size: 13px; }
+    .choice-btn { font-size: 14px; padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress-bar" style="width:0%"></div></div>
+<div id="progress-label">0%</div>
+<div id="save-dot">✓ 已自動儲存</div>
+
+<div id="app">
+  <!-- Screens inserted by JS -->
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DATA STRUCTURE
+   Each item is one of:
+     { type:'scale5', q, label, section?, sectionMsg? }
+     { type:'scale4', q, label, section?, sectionMsg? }
+     { type:'single', q, opts[], section?, sectionMsg? }
+     { type:'multi',  q, opts[], section?, sectionMsg? }
+     { type:'text',   q, placeholder?, multiline?, section?, sectionMsg? }
+     { type:'number', q, unit?, section?, sectionMsg? }
+     { type:'rating10', q, section?, sectionMsg? }
+     { type:'break',  title, msg, icon }   ← section transition card
+═══════════════════════════════════════════════════════════ */
+
+const STORAGE_KEY = 'cpr_survey_v3';
+
+const ITEMS = [
+  // ── SECTION 1 ────────────────────────────────────────────
+  { type:'break', icon:'🤝', title:'第一部分', msg:'這裡有一些特徵形容可能適合用來描述你。\n請針對每一題，勾選您同意的程度。\n\n「我認為我是一個⋯」' },
+
+  { type:'scale5', q:'1. 樂於助人且無私的', label:'【性格特質】',
+    scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'2. 充滿活力', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'3. 可信賴的工作者', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'4. 有非常多熱情', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'5. 有寬容本質', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'6. 擔心很多的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'7. 具有生動想像力', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'8. 有創造力的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'9. 會堅持到工作完成', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'10. 情緒不穩定的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'11. 重視藝術與美學經驗', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'12. 幾乎對所有人體貼且仁慈的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'13. 做事有效率的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'14. 喜歡外出、好社交的', scaleL:'非常不精確', scaleR:'非常精確' },
+  { type:'scale5', q:'15. 容易感到緊張的', scaleL:'非常不精確', scaleR:'非常精確' },
+
+  // ── SECTION 2 ────────────────────────────────────────────
+  { type:'break', icon:'💪', title:'第二部分', msg:'以下敘述主要是希望了解您本身的自我效能。\n請閱讀每一項目，並根據您對自己的了解，選擇最能夠符合您狀況的答案。' },
+
+  { type:'scale4', q:'16. 如果我盡力去做的話，我總是能夠解決難題的', label:'【自我效能】',
+    scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'17. 即使別人反對我，我仍有辦法取得我所要的', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'18. 對我來說，堅持理想和達成目標是輕而易舉的', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'19. 我自信能有效地應付任何突如其來的事情', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'20. 以我的才智，我定能應付意料之外的情況', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'21. 如果我付出必要的努力，我一定能解決大多數的難題', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'22. 我能冷靜地面對困難，因為我信賴自己處理問題的能力', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'23. 面對一個難題時，我通常能找到幾個解決方法', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'24. 有麻煩的時候，我通常能想到一些應付的方法', scaleL:'完全不正確', scaleR:'正確' },
+  { type:'scale4', q:'25. 無論什麼事在我身上發生，我都能應付自如', scaleL:'完全不正確', scaleR:'正確' },
+
+  // ── SECTION 3 ────────────────────────────────────────────
+  { type:'break', icon:'🌿', title:'第三部分', msg:'請回想最近一個月來，發生下列各狀況的頻率。\n\n感謝您的誠實作答。' },
+
+  { type:'scale5', q:'26. 一些無法預期的事情發生而感到心煩意亂', label:'【近一個月壓力感受】',
+    scaleL:'從不', scaleR:'總是', vals:['從不(1)','偶爾(2)','有時(3)','常常(4)','總是(5)'] },
+  { type:'scale5', q:'27. 感覺無法控制自己生活中重要的事情', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'28. 感到緊張不安和壓力', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'29. 成功地處理惱人的生活麻煩', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'30. 感到自己是有效地處理生活中所發生的重要改變', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'31. 對於有能力處理自己私人的問題感到很有信心', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'32. 感到事情順心如意', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'33. 發現自己無法處理所有自己必須做的事情', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'34. 有辦法控制生活中惱人的事情', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'35. 常覺得自己是駕馭事情的主人', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'36. 常生氣，因為很多事情的發生是超出自己所能控制的', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'37. 經常想到有些事情是自己必須完成的', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'38. 常能掌握時間安排方式', scaleL:'從不', scaleR:'總是' },
+  { type:'scale5', q:'39. 常感到困難的事情堆積如山，而自己無法克服它們', scaleL:'從不', scaleR:'總是' },
+
+  // ── SECTION 4 ────────────────────────────────────────────
+  { type:'break', icon:'🫁', title:'第四部分', msg:'以下是一些人經歷壓力事件後可能有的困難。\n\n「那件事」是指：您旁觀或參與 CPR＋AED 救人的急救事件。\n\n請按自己過去七天的經驗作答。\n\n請按您自己的步調，慢慢來。' },
+
+  { type:'scale5', q:'40. 任何有關那件事的事物也會挑起我對那件事的感覺', label:'【壓力事件影響】',
+    scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'41. 我難於保持安睡', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'42. 其他事情不停地令我想起那件事', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'43. 我覺得煩躁和忿怒', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'44. 每當我想起那件事或者有其他事物令我想起那件事時，我會盡力避免讓自己心煩意亂', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'45. 我會無意中想起那件事', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'46. 我覺得那件事好像從未發生過或並非真實', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'47. 我避開一些會令我回憶起那件事的事物', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'48. 關於那件事的影像在我腦海中突然浮現出來', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'49. 我神經過敏及容易被嚇得跳起來', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'50. 我嘗試不想起那件事', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'51. 我察覺到我仍然對那件事有很多感受，但我沒有去處理它們', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'52. 我對那件事的感覺是有點兒麻木', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'53. 我覺得我的行動或者感覺好像回復到那件事發生時的行動和感覺一樣', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'54. 我難於入睡', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'55. 我對那件事的強烈感覺一陣一陣地湧現出來', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'56. 我嘗試忘記那件事', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'57. 我難於集中精神', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'58. 令我想起那件事的事物使我身體產生反應（例如：流汗、呼吸困難、作嘔、或強烈心跳）', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'59. 我夢到那件事', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'60. 我覺得自己警覺性很高，處處提防', scaleL:'完全沒有', scaleR:'極度' },
+  { type:'scale5', q:'61. 我嘗試不談論有關那件事的話題', scaleL:'完全沒有', scaleR:'極度' },
+
+  // ── SECTION 5 ────────────────────────────────────────────
+  { type:'break', icon:'🌱', title:'第五部分', msg:'您已經完成了一大半，非常感謝您的堅持。\n\n以下幾題關於您面對壓力的韌性。\n請依照您個人的實際感受程度作答。' },
+
+  { type:'scale5', q:'62. 在經歷困難時期後，我往往會很快恢復過來', label:'【心理韌性】',
+    scaleL:'非常不同意', scaleR:'非常同意' },
+  { type:'scale5', q:'63. 我很難度過壓力事件', scaleL:'非常不同意', scaleR:'非常同意' },
+  { type:'scale5', q:'64. 我很快就能從壓力事件中恢復過來', scaleL:'非常不同意', scaleR:'非常同意' },
+  { type:'scale5', q:'65. 當不好的事情發生時，我很難振作起來', scaleL:'非常不同意', scaleR:'非常同意' },
+  { type:'scale5', q:'66. 我通常能順利度過困難時期', scaleL:'非常不同意', scaleR:'非常同意' },
+  { type:'scale5', q:'67. 我往往需要很長時間才能克服生活中的挫折', scaleL:'非常不同意', scaleR:'非常同意' },
+
+  // ── SECTION 6 ────────────────────────────────────────────
+  { type:'break', icon:'📋', title:'第六部分', msg:'接下來是一些關於您個人背景的問題。\n這些資料僅供學術研究使用，完全保密。' },
+
+  { type:'number', q:'68. 您的年齡', unit:'歲', label:'【基本資料】' },
+  { type:'single', q:'69. 性別', opts:['生理男','生理女'] },
+  { type:'single', q:'70. 教育程度', opts:['國小','國中','高中職','大專','碩士','博士'] },
+  { type:'single', q:'71. 工作性質', opts:['軍公教','電子業','製造業/傳統產業','醫療生技','服務業','金融業','其他'] },
+  { type:'number', q:'72. 總工作年資', unit:'年' },
+  { type:'single', q:'73. 婚姻狀況', opts:['未婚','已婚','離婚','分居','喪偶','其他'] },
+  { type:'single', q:'74. 宗教信仰', opts:['佛教','道教','天主教','基督教','一貫道','回教','無','其他'] },
+  { type:'single', q:'75. 您是否參加過急救教育或訓練課程（含示範或操作壓胸、心臟電擊等）？', opts:['是','否'] },
+  { type:'text', q:'76. 事件發生前三到五年內，您參加過的急救教育或訓練課程為？', placeholder:'請簡單描述課程名稱或機構（可略）', multiline:true, optional:true },
+  { type:'text', q:'77. 您擁有的急救證照 / 訓練證明名稱（請盡量列舉）', placeholder:'例如：BLS、ACLS、EMT、一般CPR證照等（可略）', multiline:true, optional:true },
+  { type:'text', q:'78. 事件發生時，距離最近一次上過急救課程多久？', placeholder:'例如：約3個月前、超過5年等' },
+  { type:'single', q:'79. 您是否曾有幫他人做 CPR 或使用 AED 的經驗？', opts:['是','否'] },
+  { type:'single', q:'80. 您得知家人或朋友有心臟病史，您也有出手施救的意願與準備？', opts:['是','否'] },
+  { type:'single', q:'81. 您的家人曾因心肺功能停止而送醫？', opts:['是','否'] },
+  { type:'single', q:'82. 您是否知道，您目擊或參與急救的患者，送醫後結果為何？', opts:['救活','死亡','不知道或未獲告知','一度恢復生命徵象但還是不幸離世'] },
+  { type:'single', q:'83. 您與病人的關係為何？', opts:['同住的人','有婚姻關係','同學／同事','朋友','沒有關係的陌生人','在發生場地擔負有一定急救義務（職安法規、救生員等）','其他'] },
+  { type:'number', q:'84. 發生當下，您回想與事件目擊或接觸動手施救總人數', unit:'人' },
+  { type:'number', q:'85. 發生當下，到救護／醫護人員接手前，現場「有動手」急救病人的施救者人數', unit:'人' },
+  { type:'multi', q:'86. 在此次事件中，您給予心肺功能停止病患的急救措施為何？（可複選）', opts:['打119','壓胸','拿AED','操作AED','吹氣','其他'] },
+  { type:'single', q:'87. 接手的救護人員或醫療人員是否對您的施救給予口頭意見、批評或建議？', opts:['是','否'] },
+  { type:'single', q:'88. 若救護人員或醫療人員有提供口頭意見，您覺得他們對您的說法是？', opts:['正面','負面','其他'], optional:true },
+  { type:'single', q:'89. 接手的救護人員或醫療人員是否允許或邀請您，繼續一同急救病患？', opts:['是','否','其他'] },
+  { type:'single', q:'90. 事件結束後，是否曾與任何人分享此次經驗？', opts:['是','否（請跳至第93題）','其他'] },
+  { type:'single', q:'91. 當您跟任何人分享後，他們是否有給予您意見？', opts:['是，有用的建議','是，負面的批評','否，只是陪伴','否，未表意見'], optional:true },
+  { type:'single', q:'92. 您獲得的意見、批評或建議，對您是否有幫助？', opts:['是','否','其他'], optional:true },
+  { type:'single', q:'93. 事件結束後，您對病患使用的急救技巧是否正確感到疑惑，而且到現在還沒有解惑？', opts:['是','否'] },
+  { type:'text', q:'94. 您在事件後獲得哪些幫助？', placeholder:'請描述（可略）', multiline:true, optional:true },
+
+  // ── SECTION 7 ────────────────────────────────────────────
+  { type:'break', icon:'💬', title:'第七部分', msg:'最後兩題，是開放性問題。\n\n您的想法對未來的急救教育非常重要。\n請盡量分享您的心聲。' },
+
+  { type:'text', q:'95. 急救事件後，您「希望」分享給急救教育者，在未來的急救教育加強哪些信念與觀念？', placeholder:'您的寶貴建議⋯', multiline:true, label:'【給急救教育者的話】', optional:true },
+  { type:'text', q:'96. 急救事件後，您「希望」未來給予有相同施救經驗的人，哪些信念與觀念？', placeholder:'您想傳達的話⋯', multiline:true, optional:true },
+
+  // ── SECTION 7 (DACPR) ─────────────────────────────────────
+  { type:'break', icon:'📞', title:'第七部分（電話指導）', msg:'以下題目關於此次急救事件中是否有電話指導。\n\n如果沒有電話指導，可以在下一題選「否」後結束問卷。' },
+
+  { type:'single', q:'97. 此次急救事件，您是否接受電話中有人線上指導您如何評估病人或對病人做急救？', opts:['是','否（感謝您的填寫，問卷到此結束）'] },
+  { type:'single', q:'98. 在電話中指導您的人是 119 的人員嗎？', opts:['是','否','不清楚'] },
+  { type:'single', q:'99. 您覺得有人在電話中給予您指導，是否會增強您對病人做 CPR 的信心？', opts:['是','否','其他'] },
+  { type:'single', q:'100. 您是否以前就學過 CPR，並且對急救流程是熟悉的？', opts:['是','否','其他'] },
+  { type:'rating10', q:'101. 此次電話的急救指導，您給予急救指導人員的「專業度」幾分？\n（1分＝很不滿意，10分＝很滿意）', label:'【電話指導評估】' },
+  { type:'rating10', q:'102. 此次電話的急救指導，您給予急救指導人員的「整體滿意度」幾分？\n（1分＝很不滿意，10分＝很滿意）' },
+];
+
+// Total question count (excluding breaks)
+const TOTAL_Q = ITEMS.filter(i => i.type !== 'break').length;
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let state = {
+  pid: '',
+  date: '',
+  cursor: 0,  // index into ITEMS
+  answers: {}, // key = item index, value = answer
+  startedAt: null,
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    flashSave();
+  } catch(e) {}
+}
+
+function flashSave() {
+  const dot = document.getElementById('save-dot');
+  dot.classList.add('show');
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(() => dot.classList.remove('show'), 1800);
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════════ */
+function answeredCount() {
+  return Object.keys(state.answers).filter(k => {
+    const item = ITEMS[parseInt(k)];
+    return item && item.type !== 'break';
+  }).length;
+}
+
+function updateProgress() {
+  const pct = Math.round((answeredCount() / TOTAL_Q) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = pct + '%';
+}
+
+/* ═══════════════════════════════════════════════
+   RENDER ENGINE
+═══════════════════════════════════════════════ */
+const app = document.getElementById('app');
+
+function render() {
+  updateProgress();
+  if (state.cursor === -1) { renderWelcome(); return; }
+  if (state.cursor >= ITEMS.length) { renderComplete(); return; }
+
+  const item = ITEMS[state.cursor];
+  if (item.type === 'break') {
+    renderBreak(item);
+  } else {
+    renderQuestion(item, state.cursor);
+  }
+}
+
+/* ── WELCOME ── */
+function renderWelcome() {
+  const hasProgress = answeredCount() > 0;
+  app.innerHTML = `
+    <div id="welcome" class="slide-in">
+      <div class="logo-mark">🫀</div>
+      <h1>心肺復甦術之旁觀施救者<br>心理健康調查</h1>
+      <p>感謝您參與本研究。<br>
+      本調查將詢問您於經歷急救事件後的心理健康狀態。<br>
+      <br>
+      問卷採一題一題方式呈現，您可以按照自己的步調填答。<br>
+      每次作答均會自動儲存，若中途關閉可隨時繼續。</p>
+      <div class="id-field-wrap">
+        <input type="text" id="pid-input" placeholder="受試者 ID（選填）" value="${state.pid || ''}">
+      </div>
+      ${hasProgress ? `<p class="resume-note" style="display:block;margin-bottom:16px;">✓ 偵測到上次進度（已完成 ${answeredCount()} 題），點擊下方繼續</p>` : ''}
+      <button class="btn-start" onclick="startSurvey()">${hasProgress ? '繼續填寫' : '開始填寫'}</button>
+      ${hasProgress ? `<p class="skip-link" onclick="resetSurvey()">重新開始</p>` : ''}
+    </div>`;
+}
+
+function startSurvey() {
+  state.pid = document.getElementById('pid-input').value.trim();
+  state.startedAt = state.startedAt || new Date().toISOString();
+  if (state.cursor === -1) state.cursor = 0;
+  saveState();
+  render();
+}
+
+function resetSurvey() {
+  if (confirm('確定要清除所有進度，重新開始？')) {
+    localStorage.removeItem(STORAGE_KEY);
+    state = { pid:'', date:'', cursor:0, answers:{}, startedAt:null };
+    render();
+  }
+}
+
+/* ── SECTION BREAK ── */
+function renderBreak(item) {
+  app.innerHTML = `
+    <div class="section-break slide-in">
+      <span class="sb-icon">${item.icon}</span>
+      <h2>${item.title}</h2>
+      <p>${item.msg.replace(/\n/g,'<br>')}</p>
+      <button class="btn-continue" onclick="advance()">繼續 →</button>
+    </div>`;
+}
+
+/* ── QUESTION ── */
+function renderQuestion(item, idx) {
+  // Question counter (only count non-break items up to cursor)
+  const qNum = ITEMS.slice(0, idx+1).filter(i => i.type !== 'break').length;
+
+  let inner = '';
+  const saved = state.answers[idx];
+
+  if (item.label) {
+    inner += `<div class="section-chip">${item.label}</div>`;
+  }
+  inner += `<div class="q-number">問題 ${qNum} / ${TOTAL_Q}</div>`;
+  inner += `<div class="q-text">${item.q}${item.optional ? '' : '<span class="req">＊</span>'}</div>`;
+  if (item.sub) inner += `<div class="q-sub">${item.sub}</div>`;
+
+  if (item.type === 'scale5') {
+    inner += renderScale(5, idx, item, saved);
+  } else if (item.type === 'scale4') {
+    inner += renderScale(4, idx, item, saved);
+  } else if (item.type === 'single') {
+    inner += renderSingle(idx, item, saved);
+  } else if (item.type === 'multi') {
+    inner += `<div class="multi-hint">可複選多個選項</div>`;
+    inner += renderMulti(idx, item, saved);
+  } else if (item.type === 'text') {
+    inner += renderText(idx, item, saved);
+  } else if (item.type === 'number') {
+    inner += renderNumber(idx, item, saved);
+  } else if (item.type === 'rating10') {
+    inner += renderRating10(idx, item, saved);
+  }
+
+  // Navigation
+  const canNext = item.optional ? true : !!saved && (Array.isArray(saved) ? saved.length > 0 : saved !== '');
+  inner += `<div class="nav-row">
+    ${state.cursor > 0 ? `<button class="btn-back" onclick="goBack()">←</button>` : ''}
+    <button class="btn-next" id="btn-next" onclick="advance()" ${canNext ? '' : 'disabled'}>
+      ${state.cursor === ITEMS.length - 1 ? '完成提交 ✓' : '下一題 →'}
+    </button>
+  </div>`;
+
+  if (item.optional) {
+    inner += `<p class="skip-link" onclick="skipQ(${idx})">略過此題</p>`;
+  }
+
+  app.innerHTML = `<div class="card slide-in">${inner}</div>`;
+
+  // Auto-focus text inputs
+  const ta = app.querySelector('textarea, input[type=text], input[type=number]');
+  if (ta) setTimeout(() => ta.focus(), 300);
+}
+
+function renderScale(n, idx, item, saved) {
+  let html = `<div class="scale-wrap"><div class="scale-labels"><span>${item.scaleL}</span><span>${item.scaleR}</span></div><div class="scale-buttons">`;
+  for (let v = 1; v <= n; v++) {
+    const sel = saved == v ? 'selected' : '';
+    html += `<button class="scale-btn ${sel}" onclick="pickScale(${idx},${v},${n})">${v}</button>`;
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function pickScale(idx, val, n) {
+  state.answers[idx] = val;
+  saveState();
+  // highlight
+  app.querySelectorAll('.scale-btn').forEach((b,i) => b.classList.toggle('selected', i+1 === val));
+  document.getElementById('btn-next').disabled = false;
+  setTimeout(() => advance(), 400);
+}
+
+function renderSingle(idx, item, saved) {
+  let html = '<div class="choice-list">';
+  item.opts.forEach((opt, i) => {
+    const sel = saved === opt ? 'selected' : '';
+    html += `<button class="choice-btn ${sel}" onclick="pickSingle(${idx},'${encodeURIComponent(opt)}')">
+      <span class="choice-key">${i+1}</span><span>${opt}</span>
+    </button>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function pickSingle(idx, encVal) {
+  const val = decodeURIComponent(encVal);
+  state.answers[idx] = val;
+  saveState();
+  app.querySelectorAll('.choice-btn').forEach(b => {
+    b.classList.toggle('selected', b.querySelector('span:last-child').textContent === val);
+  });
+  document.getElementById('btn-next').disabled = false;
+  setTimeout(() => advance(), 400);
+}
+
+function renderMulti(idx, item, saved) {
+  const savedArr = saved || [];
+  let html = '<div class="choice-list">';
+  item.opts.forEach((opt, i) => {
+    const sel = savedArr.includes(opt) ? 'selected' : '';
+    html += `<button class="choice-btn ${sel}" onclick="toggleMulti(${idx},'${encodeURIComponent(opt)}')">
+      <span class="choice-key">${i+1}</span><span>${opt}</span>
+    </button>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function toggleMulti(idx, encVal) {
+  const val = decodeURIComponent(encVal);
+  let arr = state.answers[idx] || [];
+  if (arr.includes(val)) arr = arr.filter(v => v !== val);
+  else arr = [...arr, val];
+  state.answers[idx] = arr;
+  saveState();
+  renderQuestion(ITEMS[idx], idx);
+  updateProgress();
+}
+
+function renderText(idx, item, saved) {
+  if (item.multiline) {
+    return `<textarea class="text-input" placeholder="${item.placeholder||''}" 
+      oninput="saveText(${idx},this.value)" rows="4">${saved||''}</textarea>`;
+  }
+  return `<input class="text-input" type="text" placeholder="${item.placeholder||''}" 
+    value="${saved||''}" oninput="saveText(${idx},this.value)">`;
+}
+
+function saveText(idx, val) {
+  state.answers[idx] = val;
+  saveState();
+  const btn = document.getElementById('btn-next');
+  if (btn) btn.disabled = !val && !ITEMS[idx].optional;
+}
+
+function renderNumber(idx, item, saved) {
+  return `<div style="display:flex;align-items:center;gap:12px;">
+    <input class="text-input" type="number" min="0" style="max-width:120px;height:52px;" 
+      value="${saved||''}" oninput="saveText(${idx},this.value)" placeholder="0">
+    <span style="color:var(--text-muted);font-size:14px;">${item.unit||''}</span>
+  </div>`;
+}
+
+function renderRating10(idx, item, saved) {
+  let html = '<div class="rating-wrap">';
+  for (let v = 1; v <= 10; v++) {
+    const sel = saved == v ? 'selected' : '';
+    html += `<button class="rating-btn ${sel}" onclick="pickRating(${idx},${v})">${v}</button>`;
+  }
+  html += `</div><div class="rating-labels"><span>非常不滿意</span><span>非常滿意</span></div>`;
+  return html;
+}
+
+function pickRating(idx, val) {
+  state.answers[idx] = val;
+  saveState();
+  app.querySelectorAll('.rating-btn').forEach((b,i) => b.classList.toggle('selected', i+1 === val));
+  document.getElementById('btn-next').disabled = false;
+  setTimeout(() => advance(), 400);
+}
+
+/* ── NAVIGATION ── */
+function advance() {
+  const item = ITEMS[state.cursor];
+  // Special skip: Q97 选否 → jump to complete
+  if (item && item.type === 'single') {
+    const ans = state.answers[state.cursor];
+    if (ans && ans.includes('否') && state.cursor === ITEMS.findIndex(i => i.q && i.q.startsWith('97.'))) {
+      state.cursor = ITEMS.length;
+      saveState();
+      render();
+      return;
+    }
+  }
+  state.cursor++;
+  saveState();
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  if (state.cursor > 0) {
+    state.cursor--;
+    saveState();
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function skipQ(idx) {
+  state.answers[idx] = '__skipped__';
+  advance();
+}
+
+/* ── COMPLETE ── */
+function renderComplete() {
+  app.innerHTML = `
+    <div id="complete" class="slide-in">
+      <span class="done-icon">🌸</span>
+      <h1>感謝您的寶貴分享</h1>
+      <p>您已完成所有問卷題目。<br><br>
+      您今天的勇氣與付出，不僅在急救現場，<br>
+      也在這份研究中留下了珍貴的足跡。<br><br>
+      如有任何疑問，請洽研究人員。</p>
+      <div>
+        <button class="btn-export" onclick="exportJSON()">📥 下載 JSON 資料</button>
+        <button class="btn-export" onclick="exportCSV()">📥 下載 CSV 資料</button>
+      </div>
+    </div>`;
+  updateProgress();
+}
+
+/* ── EXPORT ── */
+function exportJSON() {
+  const out = {
+    id: state.pid,
+    startedAt: state.startedAt,
+    completedAt: new Date().toISOString(),
+    answers: {}
+  };
+  ITEMS.forEach((item, idx) => {
+    if (item.type === 'break') return;
+    const qNum = ITEMS.slice(0, idx+1).filter(i => i.type !== 'break').length;
+    const key = `Q${qNum}`;
+    out.answers[key] = { question: item.q, answer: state.answers[idx] ?? null };
+  });
+  download('cpr_survey_result.json', JSON.stringify(out, null, 2), 'application/json');
+}
+
+function exportCSV() {
+  let rows = [['問題編號','問題','答案']];
+  ITEMS.forEach((item, idx) => {
+    if (item.type === 'break') return;
+    const qNum = ITEMS.slice(0, idx+1).filter(i => i.type !== 'break').length;
+    const ans = state.answers[idx];
+    rows.push([`Q${qNum}`, `"${item.q.replace(/"/g,'""')}"`, `"${Array.isArray(ans)?ans.join('；'):(ans??'')}"` ]);
+  });
+  download('cpr_survey_result.csv', '\uFEFF' + rows.map(r=>r.join(',')).join('\n'), 'text/csv');
+}
+
+function download(name, content, mime) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type: mime}));
+  a.download = name;
+  a.click();
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+const hadProgress = loadState();
+if (state.cursor === undefined || state.cursor === null) state.cursor = -1;
+// If never started, show welcome
+if (!hadProgress || !state.startedAt) state.cursor = -1;
+render();
+</script>
+</body>
+</html>
