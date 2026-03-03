@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>心肺復甦術施救者心理研究 - 問卷調查</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-white: #FDF9F4;
+    --sand: #E8DDD0;
+    --terracotta: #C17A5C;
+    --terracotta-light: #D9967A;
+    --terracotta-dark: #9E5C3F;
+    --sage: #7A9E8C;
+    --sage-light: #9DB8AA;
+    --charcoal: #2D2926;
+    --warm-gray: #7A7068;
+    --light-gray: #BCB5AE;
+    --shadow: rgba(45,41,38,0.08);
+    --shadow-md: rgba(45,41,38,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(193,122,92,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(122,158,140,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .progress-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--sand);
+    z-index: 100;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terracotta), var(--sage));
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    border-radius: 0 2px 2px 0;
+  }
+  .progress-label {
+    position: fixed;
+    top: 8px; right: 16px;
+    font-size: 11px;
+    color: var(--warm-gray);
+    letter-spacing: 0.05em;
+    z-index: 100;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+  }
+
+  .screen {
+    width: 100%;
+    max-width: 600px;
+    animation: fadeUp 0.5s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 4px 24px var(--shadow), 0 1px 4px var(--shadow-md);
+    border: 1px solid rgba(232,221,208,0.6);
+  }
+
+  .welcome-logo {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 26px;
+  }
+  .welcome-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px; font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.5; margin-bottom: 12px;
+  }
+  .welcome-subtitle {
+    font-size: 14px; color: var(--warm-gray);
+    line-height: 1.8; margin-bottom: 28px;
+  }
+  .welcome-note {
+    background: rgba(122,158,140,0.08);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    font-size: 13px; color: var(--warm-gray);
+    line-height: 1.7; margin-bottom: 28px;
+  }
+
+  .transition-card { text-align: center; padding: 48px 32px; }
+  .transition-icon { font-size: 40px; margin-bottom: 16px; }
+  .transition-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px; font-weight: 500;
+    color: var(--charcoal); margin-bottom: 12px;
+  }
+  .transition-msg { font-size: 14px; color: var(--warm-gray); line-height: 1.8; }
+
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(193,122,92,0.1);
+    color: var(--terracotta-dark);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 4px 10px; border-radius: 20px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .question-number { font-size: 12px; color: var(--light-gray); margin-bottom: 8px; }
+  .question-text {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 17px; font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.7; margin-bottom: 24px;
+  }
+  .question-note {
+    font-size: 13px; color: var(--warm-gray);
+    line-height: 1.7; margin-bottom: 20px;
+    padding: 12px 14px;
+    background: rgba(232,221,208,0.3);
+    border-radius: 10px;
+  }
+
+  .scale-labels {
+    display: flex; justify-content: space-between;
+    margin-bottom: 8px; padding: 0 4px;
+  }
+  .scale-label-text {
+    font-size: 11px; color: var(--light-gray);
+    max-width: 70px; text-align: center; line-height: 1.4;
+  }
+  .scale-buttons { display: flex; gap: 8px; }
+  .scale-sublabels {
+    display: flex; margin-top: 6px; padding: 0 4px;
+  }
+  .scale-btn {
+    flex: 1; aspect-ratio: 1; min-height: 48px;
+    border: 1.5px solid var(--sand);
+    border-radius: 12px; background: transparent;
+    color: var(--warm-gray); font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .scale-btn:hover { border-color: var(--terracotta-light); color: var(--terracotta); background: rgba(193,122,92,0.05); }
+  .scale-btn.selected { background: var(--terracotta); border-color: var(--terracotta); color: white; transform: scale(1.05); box-shadow: 0 4px 12px rgba(193,122,92,0.35); }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--sand);
+    border-radius: 12px; background: transparent;
+    color: var(--charcoal); font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    text-align: left; cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1.5; width: 100%;
+  }
+  .option-btn:hover { border-color: var(--terracotta-light); background: rgba(193,122,92,0.04); }
+  .option-btn.selected { background: rgba(193,122,92,0.08); border-color: var(--terracotta); }
+  .option-btn.selected .opt-indicator { background: var(--terracotta); border-color: var(--terracotta); color: white; }
+  .opt-indicator {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1.5px solid var(--sand);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 11px; font-weight: 600;
+    transition: all 0.2s ease; color: var(--light-gray);
+  }
+  .opt-indicator.checkbox { border-radius: 7px; }
+
+  .text-input {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--sand);
+    border-radius: 12px; background: transparent;
+    color: var(--charcoal); font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    line-height: 1.6; transition: border-color 0.2s;
+    resize: vertical; min-height: 52px;
+  }
+  .text-input:focus { outline: none; border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(193,122,92,0.1); }
+  .text-input::placeholder { color: var(--light-gray); }
+  textarea.text-input { min-height: 100px; }
+
+  .number-input-wrap { display: flex; align-items: center; gap: 12px; }
+  .num-btn {
+    width: 44px; height: 44px;
+    border: 1.5px solid var(--sand); border-radius: 12px;
+    background: transparent; color: var(--warm-gray);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .num-btn:hover { border-color: var(--terracotta); color: var(--terracotta); }
+  .num-display { flex: 1; text-align: center; font-size: 28px; font-family: 'Noto Serif TC', serif; color: var(--charcoal); }
+  .num-unit { font-size: 14px; color: var(--warm-gray); flex-shrink: 0; }
+
+  .rating-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rating-btn {
+    flex: 1; min-width: 36px; height: 44px;
+    border: 1.5px solid var(--sand); border-radius: 10px;
+    background: transparent; color: var(--warm-gray);
+    font-size: 14px; font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .rating-btn:hover { border-color: var(--sage); color: var(--sage); }
+  .rating-btn.selected { background: var(--sage); border-color: var(--sage); color: white; }
+
+  .nav-row { display: flex; gap: 12px; margin-top: 28px; }
+  .btn-primary {
+    flex: 1; padding: 15px 24px;
+    background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
+    color: white; border: none; border-radius: 12px;
+    font-size: 15px; font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500; cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(193,122,92,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(193,122,92,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary {
+    padding: 15px 20px; background: transparent;
+    color: var(--warm-gray); border: 1.5px solid var(--sand);
+    border-radius: 12px; font-size: 15px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .btn-secondary:hover { border-color: var(--warm-gray); color: var(--charcoal); }
+  .btn-skip {
+    width: 100%; padding: 10px; background: transparent;
+    color: var(--light-gray); border: none;
+    font-size: 12px; font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer; margin-top: 8px;
+    text-decoration: underline; text-underline-offset: 2px;
+  }
+  .btn-skip:hover { color: var(--warm-gray); }
+
+  .save-dot {
+    position: fixed; bottom: 20px; right: 20px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--light-gray);
+    z-index: 50; transition: opacity 0.3s;
+  }
+  .save-dot::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--sage);
+  }
+
+  .complete-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--sage), #5A8E78);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 32px;
+    box-shadow: 0 8px 24px rgba(122,158,140,0.3);
+  }
+  .complete-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px; font-weight: 500;
+    text-align: center; color: var(--charcoal); margin-bottom: 12px;
+  }
+  .complete-msg {
+    font-size: 14px; color: var(--warm-gray);
+    text-align: center; line-height: 1.9; margin-bottom: 28px;
+  }
+  .data-export {
+    background: rgba(232,221,208,0.3);
+    border-radius: 12px; padding: 16px;
+    font-size: 12px; color: var(--warm-gray);
+    text-align: center; line-height: 1.7;
+  }
+
+  .multi-note { font-size: 11px; color: var(--light-gray); margin-bottom: 12px; }
+  .id-row { display: flex; gap: 12px; margin-bottom: 20px; }
+  .id-field { flex: 1; }
+  .id-label { font-size: 12px; color: var(--warm-gray); margin-bottom: 6px; }
+
+  .prefix-text { font-size: 13px; color: var(--warm-gray); margin-bottom: 6px; font-style: italic; }
+
+  @media (max-width: 480px) {
+    .card { padding: 28px 22px; }
+    .question-text { font-size: 16px; }
+    .scale-btn { min-height: 44px; font-size: 14px; }
+    .btn-primary, .btn-secondary { font-size: 14px; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="progress-label" id="progressLabel"></div>
+
+<div class="app">
+  <div class="screen" id="mainScreen"></div>
+</div>
+
+<div class="save-dot" id="saveDot">已自動儲存</div>
+
+<script>
+const STORAGE_KEY = 'cpr_survey_v3';
+
+// Scale templates
+const AGREE5   = { type:'scale5', labels:['非常不精確','有些不精確','普通','有些精確','非常精確'], values:[1,2,3,4,5] };
+const CORRECT4 = { type:'scale4', labels:['完全不正確','有點正確','多數正確','正確'], values:[1,2,3,4] };
+const FREQ5    = { type:'scale5', labels:['從不','偶爾','有時','常常','總是'], values:[1,2,3,4,5] };
+const IMPACT5  = { type:'scale5', labels:['完全沒有','少許','中度','相當大','極度'], values:[1,2,3,4,5] };
+const RES5     = { type:'scale5', labels:['非常不同意','不同意','普通','同意','非常同意'], values:[1,2,3,4,5] };
+
+const FLOW = [
+  { id:'welcome', type:'welcome' },
+
+  { id:'tr1', type:'transition', icon:'🌿', title:'第一部分：人格特質',
+    msg:'以下是一些特徵形容，可能適合描述您。\n請在「我認為我是一個⋯⋯」之後，針對每一題勾選您同意的程度。\n\n（共 15 題）' },
+
+  ...['樂於助人且無私的','充滿活力','可信賴的工作者','有非常多熱情','有寬容本質',
+      '擔心很多的','具有生動想像力','有創造力的','會堅持到工作完成','情緒不穩定的',
+      '重視藝術與美學經驗','幾乎對所有人體貼且仁慈的','做事有效率的','喜歡外出、好社交的','容易感到緊張的']
+    .map((text,i)=>({id:`q${i+1}`,qNum:i+1,section:'第一部分',prefix:'我認為我是一個⋯⋯',text,...AGREE5,required:true})),
+
+  { id:'tr2', type:'transition', icon:'💪', title:'您的分享非常有意義。',
+    msg:'接下來是第二部分。\n\n以下敘述希望了解您的自我效能感——對自己處理困難情況的信心。\n請根據您的了解作答。\n\n（共 10 題）' },
+
+  ...['如果我盡力去做的話，我總是能夠解決難題的','即使別人反對我，我仍有辦法取得我所要的',
+      '對我來說，堅持理想和達成目標是輕而易舉的','我自信能有效地應付任何突如其來的事情',
+      '以我的才智，我定能應付意料之外的情況','如果我付出必要的努力，我一定能解決大多數的難題',
+      '我能冷靜地面對困難，因為我信賴自己處理問題的能力','面對一個難題時，我通常能找到幾個解決方法',
+      '有麻煩的時候，我通常能想到一些應付的方法','無論什麼事在我身上發生，我都能應付自如']
+    .map((text,i)=>({id:`q${i+16}`,qNum:i+16,section:'第二部分',text,...CORRECT4,required:true})),
+
+  { id:'tr3', type:'transition', icon:'🌊', title:'謝謝您，請繼續保持。',
+    msg:'第三部分將詢問您最近一個月的壓力感受。\n請回想過去一個月，選擇最符合您情況的頻率。\n\n（共 14 題）' },
+
+  ...['一些無法預期的事情發生而感到心煩意亂','感覺無法控制自己生活中重要的事情',
+      '感到緊張不安和壓力','成功地處理惱人的生活麻煩','感到自己是有效地處理生活中所發生的重要改變',
+      '對於有能力處理自己私人的問題感到很有信心','感到事情順心如意',
+      '發現自己無法處理所有自己必須做的事情','有辦法控制生活中惱人的事情',
+      '常覺得自己是駕馭事情的主人','常生氣，因為很多事情的發生是超出自己所能控制的',
+      '經常想到有些事情是自己必須完成的','常能掌握時間安排方式',
+      '常感到困難的事情堆積如山，而自己無法克服它們']
+    .map((text,i)=>({id:`q${i+26}`,qNum:i+26,section:'第三部分',text,...FREQ5,required:true})),
+
+  { id:'tr4', type:'transition', icon:'🤍', title:'您做得非常好。',
+    msg:'接下來這個部分，我們想了解這次急救經歷對您的影響。\n\n「那件事」指的是：您旁觀或參與的心肺復甦術（CPR+AED）事件。\n\n請回想過去七天，選擇最能描述每項影響程度的選項。\n\n（共 22 題）' },
+
+  ...['任何有關那件事的事物也會挑起我對那件事的感覺','我難於保持安睡',
+      '其他事情不停地令我想起那件事','我覺得煩躁和忿怒',
+      '每當我想起那件事或有其他事物令我想起那件事時，我會盡力避免讓自己心煩意亂',
+      '我會無意中想起那件事','我覺得那件事好像從未發生過或並非真實',
+      '我避開一些會令我回憶起那件事的事物','關於那件事的影像在我腦海中突然浮現出來',
+      '我神經過敏及容易被嚇得跳起來','我嘗試不想起那件事',
+      '我察覺到我仍然對那件事有很多感受，但我沒有去處理它們',
+      '我對那件事的感覺是有點兒麻木',
+      '我覺得我的行動或感覺好像回復到那件事發生時的行動和感覺一樣',
+      '我難於入睡','我對那件事的強烈感覺一陣一陣地湧現出來',
+      '我嘗試忘記那件事','我難於集中精神',
+      '令我想起那件事的事物使我身體產生反應，例如：流汗、呼吸困難、作嘔、或強烈心跳',
+      '我夢到那件事','我覺得自己警覺性很高，處處提防','我嘗試不談論有關那件事的話題']
+    .map((text,i)=>({id:`q${i+40}`,qNum:i+40,section:'第四部分',text,...IMPACT5,required:true})),
+
+  { id:'tr5', type:'transition', icon:'🌱', title:'感謝您願意分享這些感受。',
+    msg:'第五部分將了解您的心理韌性——從困難中復原的能力。\n\n請依照您個人的實際感受程度作答。\n\n（共 6 題）' },
+
+  ...['在經歷困難時期後，我往往會很快恢復過來','我很難度過壓力事件',
+      '我很快就能從壓力事件中恢復過來','當不好的事情發生時，我很難振作起來',
+      '我通常能順利度過困難時期','我往往需要很長時間才能克服生活中的挫折']
+    .map((text,i)=>({id:`q${i+62}`,qNum:i+62,section:'第五部分',text,...RES5,required:true})),
+
+  { id:'tr6', type:'transition', icon:'📋', title:'最後幾個部分是基本資料。',
+    msg:'這些資訊將幫助我們了解不同背景施救者的經驗。\n所有資料將嚴格保密，僅作研究用途。\n\n（共 29 題）' },
+
+  { id:'q68', qNum:68, section:'第六部分', text:'您的年齡？', type:'number', unit:'歲', min:10, max:100, required:true },
+
+  { id:'q69', qNum:69, section:'第六部分', text:'您的性別？', type:'radio', required:true,
+    options:[{label:'生理男',value:1},{label:'生理女',value:2}] },
+
+  { id:'q70', qNum:70, section:'第六部分', text:'您的教育程度？', type:'radio', required:true,
+    options:[{label:'國小',value:1},{label:'國中',value:2},{label:'高中職',value:3},{label:'大專',value:4},{label:'碩士',value:5},{label:'博士',value:6}] },
+
+  { id:'q71', qNum:71, section:'第六部分', text:'您的工作性質？', type:'radio', required:true,
+    options:[{label:'軍公教',value:1},{label:'電子業',value:2},{label:'製造業/傳統產業',value:3},{label:'醫療生技',value:4},{label:'服務業',value:5},{label:'金融業',value:6},{label:'其他',value:7}] },
+
+  { id:'q72', qNum:72, section:'第六部分', text:'您的總工作年資？', type:'number', unit:'年', min:0, max:60, required:false },
+
+  { id:'q73', qNum:73, section:'第六部分', text:'您的婚姻狀況？', type:'radio', required:true,
+    options:[{label:'未婚',value:1},{label:'已婚',value:2},{label:'離婚',value:3},{label:'分居',value:4},{label:'喪偶',value:5},{label:'其他',value:6}] },
+
+  { id:'q74', qNum:74, section:'第六部分', text:'您的宗教信仰？', type:'radio', required:false,
+    options:[{label:'佛教',value:1},{label:'道教',value:2},{label:'天主教',value:3},{label:'基督教',value:4},{label:'一貫道',value:5},{label:'回教',value:6},{label:'無',value:7},{label:'其他',value:8}] },
+
+  { id:'q75', qNum:75, section:'第六部分',
+    text:'您是否參加過任何形式的急救教育或訓練課程（包含壓胸或心臟電擊示範/操作）？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q76', qNum:76, section:'第六部分',
+    text:'事件發生前三到五年內，您參加過哪些急救教育或訓練課程？',
+    type:'textarea', required:false, conditionalOn:{id:'q75',value:1},
+    placeholder:'請列舉您曾參加的課程名稱⋯' },
+
+  { id:'q77', qNum:77, section:'第六部分', text:'您擁有哪些急救證照或訓練證明？',
+    type:'textarea', required:false,
+    note:'包含：BLS/ACLS等專業醫療證照、各級救護員EMT、一般CPR+AED訓練證明、參訓證明等。',
+    placeholder:'請盡量列舉證照或訓練證明名稱⋯' },
+
+  { id:'q78', qNum:78, section:'第六部分', text:'事件發生時，距離您最近一次上急救課程有多久？',
+    type:'text', required:false, placeholder:'例如：半年前、三年前⋯' },
+
+  { id:'q79', qNum:79, section:'第六部分', text:'您曾有幫他人做心肺復甦術（CPR）或使用自動體外去顫器（AED）的經驗嗎？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q80', qNum:80, section:'第六部分', text:'您得知家人或朋友有心臟病史，您有出手施救的意願與準備嗎？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q81', qNum:81, section:'第六部分', text:'您的家人曾因心肺功能停止而送醫嗎？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q82', qNum:82, section:'第六部分', text:'您是否知道您目擊或參與急救的患者，送醫後的結果？',
+    type:'radio', required:true,
+    options:[{label:'救活',value:1},{label:'死亡',value:2},{label:'不知道或未獲告知',value:3},{label:'一度恢復生命徵象但還是不幸離世',value:4}] },
+
+  { id:'q83', qNum:83, section:'第六部分', text:'您與病患的關係為何？', type:'radio', required:true,
+    options:[{label:'同住的人',value:1},{label:'有婚姻關係',value:2},{label:'同學／同事',value:3},{label:'朋友',value:4},{label:'沒有關係的陌生人',value:5},
+      {label:'在發生場地擔負有一定的急救義務（職場急救人員、救生員、保全、運動教練等）',value:6},{label:'其他',value:7}] },
+
+  { id:'q84', qNum:84, section:'第六部分', text:'發生當下，您回想與事件目擊或接觸動手施救的總人數？', type:'number', unit:'人', min:1, max:50, required:true },
+
+  { id:'q85', qNum:85, section:'第六部分', text:'到救護人員接手前，現場「有動手」急救病人的施救者人數？', type:'number', unit:'人', min:1, max:50, required:true },
+
+  { id:'q86', qNum:86, section:'第六部分', text:'您在此次事件中，對病患給予的急救措施？（可複選）',
+    type:'checkbox', required:true,
+    options:[{label:'打 119',value:1},{label:'壓胸',value:2},{label:'拿 AED',value:3},{label:'操作 AED',value:4},{label:'吹氣',value:5},{label:'其他',value:6}] },
+
+  { id:'q87', qNum:87, section:'第六部分', text:'接手的救護人員或醫療人員是否對您的施救給予口頭意見、批評或建議？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q88', qNum:88, section:'第六部分', text:'救護人員或醫療人員的說法是？',
+    type:'radio', required:false, conditionalOn:{id:'q87',value:1},
+    options:[{label:'正面',value:1},{label:'負面',value:2},{label:'其他',value:3}] },
+
+  { id:'q89', qNum:89, section:'第六部分', text:'接手的救護人員或醫療人員是否允許或邀請您繼續一同急救病患？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'其他',value:3}] },
+
+  { id:'q90', qNum:90, section:'第六部分', text:'事件結束後，您是否曾與任何人分享此次經驗？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'其他',value:3}],
+    skipOnValue:{value:2,skipTo:'q93'} },
+
+  { id:'q91', qNum:91, section:'第六部分', text:'當您跟任何人分享後，他們是否有給予您意見？',
+    type:'radio', required:false, conditionalOn:{id:'q90',value:1},
+    options:[{label:'是，有用的建議',value:1},{label:'是，負面的批評',value:2},{label:'否，只是陪伴',value:3},{label:'否，未表意見',value:4}] },
+
+  { id:'q92', qNum:92, section:'第六部分', text:'您獲得的意見、批評或建議，對您是否有幫助？',
+    type:'radio', required:false, conditionalOn:{id:'q90',value:1},
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'其他',value:3}] },
+
+  { id:'q93', qNum:93, section:'第六部分', text:'事件結束後，您對自己使用的急救技巧是否正確感到疑惑，且到現在還沒有解惑？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2}] },
+
+  { id:'q94', qNum:94, section:'第六部分', text:'事件後您獲得哪些幫助？',
+    type:'textarea', required:false, placeholder:'請描述您獲得的支持或協助⋯' },
+
+  { id:'q95', qNum:95, section:'第六部分',
+    text:'急救事件後，您「希望」分享給急救教育者，在未來的急救教育中加強哪些信念與觀念？',
+    type:'textarea', required:false, placeholder:'請分享您的想法⋯' },
+
+  { id:'q96', qNum:96, section:'第六部分',
+    text:'急救事件後，您「希望」未來給予有相同施救經驗的人哪些信念與觀念？',
+    type:'textarea', required:false, placeholder:'請分享您的想法⋯' },
+
+  { id:'tr7', type:'transition', icon:'📞', title:'第七部分：電話急救指導',
+    msg:'最後一個部分，關於此次急救事件中的電話指導情況。\n\n（共 6 題）' },
+
+  { id:'q97', qNum:97, section:'第七部分',
+    text:'此次急救事件中，您是否接受過電話中有人線上指導您如何評估病人或對病人做急救？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否（感謝您的寶貴分享）',value:2}],
+    skipOnValue:{value:2,skipTo:'complete'} },
+
+  { id:'q98', qNum:98, section:'第七部分', text:'電話中指導您的人是 119 的人員嗎？',
+    type:'radio', required:true, conditionalOn:{id:'q97',value:1},
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'不清楚',value:3}] },
+
+  { id:'q99', qNum:99, section:'第七部分', text:'您覺得有人在電話中給予指導，是否增強了您對病人做 CPR 的信心？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'其他',value:3}] },
+
+  { id:'q100', qNum:100, section:'第七部分', text:'您是否以前就學過 CPR，並且對急救流程是熟悉的？',
+    type:'radio', required:true,
+    options:[{label:'是',value:1},{label:'否',value:2},{label:'其他',value:3}] },
+
+  { id:'q101', qNum:101, section:'第七部分', text:'您給予電話急救指導人員的「專業度」幾分？',
+    type:'rating10', required:true, note:'1分 = 很不滿意　10分 = 很滿意' },
+
+  { id:'q102', qNum:102, section:'第七部分', text:'您給予電話急救指導人員的「整體滿意度」幾分？',
+    type:'rating10', required:true, note:'1分 = 很不滿意　10分 = 很滿意' },
+
+  { id:'complete', type:'complete' }
+];
+
+// ── State ──
+let state = { surveyId:'', date:'', answers:{}, currentIndex:0 };
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) state = {...state, ...JSON.parse(s)};
+  } catch(e){}
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); flashSave(); } catch(e){}
+}
+
+function flashSave() {
+  const d = document.getElementById('saveDot');
+  d.style.opacity = '1';
+  setTimeout(()=>d.style.opacity='0.4', 1500);
+}
+
+// ── Navigation ──
+function getVisible() {
+  return FLOW.filter(step => {
+    if (!step.conditionalOn) return true;
+    const v = state.answers[step.conditionalOn.id];
+    return Array.isArray(v) ? v.includes(step.conditionalOn.value) : v == step.conditionalOn.value;
+  });
+}
+
+function cur() { return getVisible()[state.currentIndex] || null; }
+
+function updateProgress() {
+  const vis = getVisible();
+  const pct = vis.length>1 ? (state.currentIndex/(vis.length-1))*100 : 0;
+  document.getElementById('progressBar').style.width = pct+'%';
+  const total = vis.filter(s=>!['welcome','transition','complete'].includes(s.type)).length;
+  const done = Math.min(Object.keys(state.answers).filter(k=>{const v=state.answers[k];return Array.isArray(v)?v.length>0:v!==null&&v!==undefined&&v!==''}).length, total);
+  document.getElementById('progressLabel').textContent = done+' / '+total;
+}
+
+function goNext() {
+  const step = cur();
+  const vis = getVisible();
+  if (step && step.skipOnValue) {
+    const ans = state.answers[step.id];
+    if (ans == step.skipOnValue.value) {
+      const ti = vis.findIndex(s=>s.id===step.skipOnValue.skipTo);
+      if (ti !== -1) { state.currentIndex = ti; saveState(); render(); return; }
+    }
+  }
+  if (state.currentIndex < vis.length-1) { state.currentIndex++; saveState(); render(); }
+}
+
+function goPrev() {
+  if (state.currentIndex > 0) { state.currentIndex--; saveState(); render(); }
+}
+
+// ── Render ──
+function render() {
+  updateProgress();
+  const step = cur();
+  if (!step) return;
+  const scr = document.getElementById('mainScreen');
+  scr.style.animation = 'none';
+  requestAnimationFrame(()=>{ scr.style.animation = 'fadeUp 0.4s cubic-bezier(0.4,0,0.2,1) both'; });
+
+  if (step.type==='welcome') renderWelcome(scr);
+  else if (step.type==='transition') renderTransition(scr, step);
+  else if (step.type==='complete') renderComplete(scr);
+  else renderQuestion(scr, step);
+}
+
+function renderWelcome(c) {
+  c.innerHTML = `
+    <div class="card">
+      <div class="welcome-logo">❤️</div>
+      <div class="welcome-title">心肺復甦術之旁觀施救者<br>心理影響研究問卷</div>
+      <p class="welcome-subtitle">
+        首先，感謝您在緊急時刻挺身而出。<br>
+        這份問卷將協助我們了解急救施救者的心理健康，<br>
+        讓未來能提供更好的支持。
+      </p>
+      <div class="welcome-note">
+        🔒 本問卷完全匿名，所有資料僅供學術研究使用。<br>
+        💾 您的作答將自動儲存，隨時可以暫停並稍後繼續。<br>
+        ⏱️ 預計填寫時間：約 20–30 分鐘。
+      </div>
+      <div class="id-row">
+        <div class="id-field">
+          <div class="id-label">研究 ID（由研究人員填寫）</div>
+          <input class="text-input" id="inId" type="text" placeholder="ID 編號" value="${state.surveyId||''}">
+        </div>
+        <div class="id-field">
+          <div class="id-label">日期</div>
+          <input class="text-input" id="inDate" type="date" value="${state.date||new Date().toISOString().slice(0,10)}">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="startSurvey()">開始填寫 →</button>
+    </div>`;
+}
+
+function startSurvey() {
+  state.surveyId = document.getElementById('inId').value;
+  state.date = document.getElementById('inDate').value;
+  state.currentIndex = 1;
+  saveState(); render();
+}
+
+function renderTransition(c, step) {
+  c.innerHTML = `
+    <div class="card transition-card">
+      <div class="transition-icon">${step.icon}</div>
+      <div class="transition-title">${step.title}</div>
+      <div class="transition-msg">${step.msg.replace(/\n/g,'<br>')}</div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goPrev()">← 返回</button>
+        <button class="btn-primary" onclick="goNext()">繼續 →</button>
+      </div>
+    </div>`;
+}
+
+function renderQuestion(c, step) {
+  const ans = state.answers[step.id];
+  let html = '';
+
+  if (step.type==='scale5'||step.type==='scale4') {
+    const vals = step.values;
+    html = `
+      <div class="scale-labels">
+        <span class="scale-label-text">${step.labels[0]}</span>
+        <span class="scale-label-text">${step.labels[Math.floor(step.labels.length/2)]}</span>
+        <span class="scale-label-text">${step.labels[step.labels.length-1]}</span>
+      </div>
+      <div class="scale-buttons">
+        ${vals.map((v,i)=>`<button class="scale-btn${ans==v?' selected':''}" onclick="setAns('${step.id}',${v},true)">${v}</button>`).join('')}
+      </div>
+      <div style="display:flex;margin-top:6px;">
+        ${step.labels.map(l=>`<span style="font-size:10px;color:var(--light-gray);text-align:center;flex:1">${l}</span>`).join('')}
+      </div>`;
+  } else if (step.type==='radio') {
+    html = `<div class="options-list">${step.options.map((o,i)=>`
+      <button class="option-btn${ans==o.value?' selected':''}" onclick="setAns('${step.id}',${o.value},true)">
+        <span class="opt-indicator">${String.fromCharCode(65+i)}</span>${o.label}
+      </button>`).join('')}</div>`;
+  } else if (step.type==='checkbox') {
+    const sel = Array.isArray(ans)?ans:[];
+    html = `<div class="multi-note">可複選多個選項</div>
+      <div class="options-list">${step.options.map((o,i)=>`
+        <button class="option-btn${sel.includes(o.value)?' selected':''}" onclick="toggleCB('${step.id}',${o.value})">
+          <span class="opt-indicator checkbox">${sel.includes(o.value)?'✓':String.fromCharCode(65+i)}</span>${o.label}
+        </button>`).join('')}</div>`;
+  } else if (step.type==='number') {
+    const v = ans!==undefined&&ans!==null?ans:(step.min||0);
+    html = `<div class="number-input-wrap">
+      <button class="num-btn" onclick="adjNum('${step.id}',${step.min||0},${step.max||999},-1)">−</button>
+      <div class="num-display" id="nd_${step.id}">${v}</div>
+      <button class="num-btn" onclick="adjNum('${step.id}',${step.min||0},${step.max||999},1)">＋</button>
+      <span class="num-unit">${step.unit||''}</span>
+    </div>`;
+  } else if (step.type==='text') {
+    html = `<input class="text-input" type="text" placeholder="${step.placeholder||'請輸入⋯'}" value="${ans||''}" oninput="setAns('${step.id}',this.value,false)">`;
+  } else if (step.type==='textarea') {
+    html = `<textarea class="text-input" placeholder="${step.placeholder||'請輸入⋯'}" oninput="setAns('${step.id}',this.value,false)">${ans||''}</textarea>`;
+  } else if (step.type==='rating10') {
+    html = `<div class="rating-row">${[1,2,3,4,5,6,7,8,9,10].map(n=>`
+      <button class="rating-btn${ans==n?' selected':''}" onclick="setAns('${step.id}',${n},true)">${n}</button>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+      <span style="font-size:11px;color:var(--light-gray)">很不滿意</span>
+      <span style="font-size:11px;color:var(--light-gray)">很滿意</span>
+    </div>`;
+  }
+
+  const required = step.required !== false;
+  const answered = isAns(step.id, step.type);
+
+  c.innerHTML = `
+    <div class="card">
+      <div class="section-tag">● ${step.section}</div>
+      <div class="question-number">第 ${step.qNum} 題</div>
+      ${step.prefix?`<div class="prefix-text">${step.prefix}</div>`:''}
+      <div class="question-text">${step.text}</div>
+      ${step.note?`<div class="question-note">ℹ️ ${step.note}</div>`:''}
+      <div id="ia_${step.id}">${html}</div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goPrev()">←</button>
+        <button class="btn-primary" id="nb" ${required&&!answered?'disabled':''} onclick="goNext()">繼續 →</button>
+      </div>
+      ${!required?`<button class="btn-skip" onclick="goNext()">略過此題</button>`:''}
+    </div>`;
+}
+
+function renderComplete(c) {
+  c.innerHTML = `
+    <div class="card" style="text-align:center">
+      <div class="complete-icon">✓</div>
+      <div class="complete-title">感謝您的參與！</div>
+      <div class="complete-msg">
+        您的經驗分享對這項研究至關重要。<br>
+        我們衷心感謝您在如此不容易的時刻，<br>
+        仍願意貢獻您的寶貴心得。<br><br>
+        您今天的勇氣——無論是當時的施救，<br>
+        還是現在的分享——都非常了不起。
+      </div>
+      <div class="data-export">💾 您的答案已自動儲存於本裝置</div>
+      <button class="btn-primary" style="margin-top:20px" onclick="exportData()">匯出資料（JSON）</button>
+      <button class="btn-secondary" style="margin-top:10px;width:100%" onclick="clearRestart()">重新填寫</button>
+    </div>`;
+}
+
+// ── Answers ──
+function isAns(id, type) {
+  const v = state.answers[id];
+  if (type==='checkbox') return Array.isArray(v)&&v.length>0;
+  if (type==='number') return v!==undefined&&v!==null;
+  return v!==undefined&&v!==null&&v!=='';
+}
+
+function setAns(id, val, autoAdvance) {
+  state.answers[id] = val;
+  saveState();
+  const step = cur();
+  if (step && step.id===id) {
+    const nb = document.getElementById('nb');
+    if (nb) nb.disabled = step.required!==false && !isAns(id, step.type);
+  }
+  if (autoAdvance && ['scale5','scale4','radio','rating10'].includes(cur()&&cur().type||'')) {
+    renderQuestion(document.getElementById('mainScreen'), cur());
+    setTimeout(()=>{ if(cur()&&cur().id===id) goNext(); }, 350);
+  }
+}
+
+function toggleCB(id, val) {
+  let cur2 = Array.isArray(state.answers[id])?[...state.answers[id]]:[];
+  const i = cur2.indexOf(val);
+  if(i>-1) cur2.splice(i,1); else cur2.push(val);
+  state.answers[id] = cur2;
+  saveState();
+  renderQuestion(document.getElementById('mainScreen'), cur());
+}
+
+function adjNum(id, min, max, delta) {
+  const v = state.answers[id]!==undefined?parseInt(state.answers[id]):min;
+  const next = Math.max(min, Math.min(max, v+delta));
+  state.answers[id] = next;
+  saveState();
+  const d = document.getElementById('nd_'+id);
+  if(d) d.textContent = next;
+  const nb = document.getElementById('nb');
+  if(nb) nb.disabled = false;
+}
+
+function exportData() {
+  const data = { surveyId:state.surveyId, date:state.date, exportedAt:new Date().toISOString(), answers:state.answers };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`cpr_survey_${state.surveyId||'export'}_${Date.now()}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function clearRestart() {
+  if(confirm('確定要清除所有答案並重新開始嗎？')) {
+    localStorage.removeItem(STORAGE_KEY);
+    state = {surveyId:'',date:'',answers:{},currentIndex:0};
+    render();
+  }
+}
+
+// ── Init ──
+loadState();
+render();
+document.getElementById('saveDot').style.opacity = '0.4';
+</script>
+</body>
+</html>
